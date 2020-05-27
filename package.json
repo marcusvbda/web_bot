@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/marcusvbda/facebook_puppeteer#readme",
   "dependencies": {
-    "puppeteer": "^3.1.0"
+    "fetch": "^1.1.0",
+    "puppeteer": "^3.1.0",
+    "zombie": "^6.1.4"
   }
 }
