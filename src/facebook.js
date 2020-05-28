@@ -8,9 +8,14 @@ const facebook = {
     async signup(newUser) {
         await this.createPage()
 
-        await this.helper.describe("acessa o facebook e seta o window.navigator = {} ...", async () => {
+        await this.helper.describe("acessa o facebook e seta o window.navigator = undefined ...", async () => {
             await this.page.goto('https:/facebook.com/reg', {
                 waitUntil: 'networkidle2'
+            })
+            await this.page.evaluateOnNewDocument(() => {
+                Object.defineProperty(navigator, 'webdriver', {
+                    get: () => undefined,
+                })
             })
         })
 
@@ -38,7 +43,7 @@ const facebook = {
                 document.querySelector(`input[type='radio'][name='sex'][value='${newUser.sex}']`).click()
             }, { newUser })
 
-            await this.page.click("button[name='websubmit']")
+            await this.page.type("input[name='firstname']", String.fromCharCode(13))
 
             await this.page.waitFor(parseInt(process.env.WAIT_TIMEOUT))
         })

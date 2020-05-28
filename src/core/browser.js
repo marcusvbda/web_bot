@@ -16,6 +16,7 @@ const Browser = {
             ignoreHTTPSErrors: true,
             defaultViewport: null,
             ignoreDefaultArgs: ["--enable-automation"],
+            // executablePath: "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
         })
 
         return await this.browser.newPage()
