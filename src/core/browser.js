@@ -1,14 +1,10 @@
 const puppeteer = require('puppeteer')
 
-class Browser {
-
-    constructor() {
-        this.browser = undefined
-    }
-
+const Browser = {
+    browser: undefined,
     async createPage() {
         this.browser = await puppeteer.launch({
-            headless: false,
+            headless: (process.env.HEADLESS.toLowerCase() == "false"),
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -23,10 +19,9 @@ class Browser {
         })
 
         return await this.browser.newPage()
-    }
-
+    },
     async close() {
         await this.browser.close()
     }
 }
-module.exports = new Browser()
+module.exports = Browser
