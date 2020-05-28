@@ -8,10 +8,10 @@
         firstname: "Jõao",
         lastname: "da Silva",
         sex: "m", //m or f 
-        birth_day: 08, //optional
-        birth_month: 04,  //optional
-        birth_month: 1992, //optional
-        password: "*******" //optional
+        birthday_day: 08, //optional
+        birthday_month: 04,  //optional
+        birthday_year: 1992, //optional
+        password: "S3nh4DoF4cebo0k" //optional
     })
 
 })()
