@@ -19,11 +19,33 @@ const Browser = {
             ignoreDefaultArgs: ["--enable-automation"],
         })
         this.page = await this.browser.newPage()
+        await this.page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36')
+        await this.page.evaluateOnNewDocument(() => {
+            Object.defineProperty(navigator, 'webdriver', {
+                get: () => false,
+            })
+            const chromeResult = {
+                loadTimes() { },
+                csi() { }
+            }
+            Object.defineProperty(window, 'chrome', {
+                get: () => chromeResult
+            })
+            Object.defineProperty(navigator, 'languages', {
+                get: () => ["en-US", "en", "pt"],
+            })
+            Object.defineProperty(navigator, 'plugins', {
+                get: () => [1, 2]
+            })
+        })
+
     },
     async close() {
         await this.browser.close()
     },
     async goto(route) {
+        const context = this.browser.defaultBrowserContext()
+        await context.overridePermissions(route, ['notifications'])
         await this.page.goto(route, {
             waitUntil: 'networkidle2'
         })
@@ -55,13 +77,15 @@ const Browser = {
         return (Math.random() * (+max - +min) + +min)
     },
     async stealth_test() {
-        await this.createPage()
-        // await this.createPage(true) // headless
+        const headless = true
+        await this.createPage(headless)
+
         await this.goto('https://intoli.com/blog/not-possible-to-block-chrome-headless/chrome-headless-test.html')
         await this.waitFor("#user-agent-result")
-        console.log("runing test .............\n")
+        console.log("runing stealth test .............\n")
 
         let test = {}
+
         test.user_agent = await this.executeScript(() => document.querySelector("#user-agent-result").classList.contains("passed"))
         console.log(`userAgent ............... ${test.user_agent ? 'ok' : 'failed'}`)
 
@@ -80,7 +104,7 @@ const Browser = {
         test.language = await this.executeScript(() => document.querySelector("#languages-result").classList.contains("passed"))
         console.log(`language length.......... ${test.language ? 'ok' : 'failed'}`)
 
-        // await this.close()
+        if (headless) await this.close()
     }
 }
 module.exports = Browser

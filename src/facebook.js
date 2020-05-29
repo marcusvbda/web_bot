@@ -27,7 +27,10 @@ const facebook = {
             await browser.select("select[name='birthday_month']", newUser.birthday_month)
             await browser.select("select[name='birthday_year']", newUser.birthday_year)
             await browser.radio("input[type='radio'][name='sex']", newUser.sex)
-            // await browser.type("input[name='firstname']", _ENTER_)
+        })
+
+        await describe("submite as informações ...", async () => {
+            await browser.type("input[name='firstname']", _ENTER_)
         })
 
         //await browser.close()
