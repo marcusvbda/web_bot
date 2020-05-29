@@ -1,52 +1,37 @@
+const { _ENTER_ } = require("./core/keys")
+const { describe, random } = require("./core/helper")
+const browser = require("./core/browser")
+
 const facebook = {
-    helper: require("./core/helper"),
-    browser: require("./core/browser"),
-    driver: undefined,
-    async createPage() {
-        this.driver = await this.browser.createPage()
-    },
+
     async signup(newUser) {
-        await this.createPage()
-        await this.helper.describe("acessa o facebook ...", async () => {
-            await this.driver.browser.get('https:/facebook.com/reg')
-            await this.driver.browser.executeScript(() => {
-                Object.defineProperty(navigator, 'webdriver', {
-                    get: () => undefined,
-                })
-            })
+        await browser.createPage()
+        await describe(`Acessa o facebook ...`, async () => {
+            await browser.goto('https://facebook.com/reg')
         })
 
-        newUser.password = newUser.password ? newUser.password : this.helper.random("password")
-        newUser.birthday_day = newUser.birthday_day ? String(newUser.birthday_day) : this.helper.random("day")
-        newUser.birthday_month = newUser.birthday_month ? String(newUser.birthday_month) : this.helper.random("month")
-        newUser.birthday_year = newUser.birthday_year ? String(newUser.birthday_year) : this.helper.random("year")
-        newUser.sex = newUser.sex ? (newUser.sex.toLowerCase() == "f" ? 2 : 1) : this.helper.random("sex")
+        newUser.password = newUser.password ? newUser.password : random("password")
+        newUser.birthday_day = newUser.birthday_day ? String(newUser.birthday_day) : random("day")
+        newUser.birthday_month = newUser.birthday_month ? String(newUser.birthday_month) : random("month")
+        newUser.birthday_year = newUser.birthday_year ? String(newUser.birthday_year) : random("year")
+        newUser.sex = newUser.sex ? (newUser.sex.toLowerCase() == "m" ? 2 : 1) : random("sex")
 
-        await this.helper.describe("preenche o formulário de cadastro ...", async () => {
-            await this.driver.browser.findElement({ xpath: "//input[@name='firstname']" }).sendKeys(newUser.firstname)
-            await this.driver.browser.findElement({ xpath: "//input[@name='lastname']" }).sendKeys(newUser.lastname)
-            await this.driver.browser.findElement({ xpath: "//input[@name='reg_email__']" }).sendKeys(newUser.email)
-            await this.driver.browser.findElement({ xpath: "//input[@name='reg_email_confirmation__']" }).sendKeys(newUser.email)
-            await this.driver.browser.findElement({ xpath: "//input[@name='reg_passwd__']" }).sendKeys(newUser.password)
-            await this.driver.browser.executeScript(({ newUser }) => {
-                document.querySelector("select[name='birthday_day']").value = newUser.birthday_day
-                document.querySelector("select[name='birthday_month']").value = newUser.birthday_month
-                document.querySelector("select[name='birthday_year']").value = newUser.birthday_year
-            }, { newUser })
-            await this.driver.browser.executeScript(({ newUser }) => {
-                document.querySelector(`input[type='radio'][name='sex'][value='${newUser.sex}']`).click()
-            }, { newUser })
-            await this.driver.browser.findElement({ xpath: "//input[@name='firstname']" }).sendKeys(this.driver.keys.ENTER)
+        await describe("preenche o formulário de cadastro ...", async () => {
+            await browser.waitFor("input[name='firstname']")
+            await browser.type("input[name='firstname']", newUser.firstname)
+            await browser.type("input[name='lastname']", newUser.lastname)
+            await browser.type("input[name='reg_email__']", newUser.email)
+            await browser.type("input[name='reg_email_confirmation__']", newUser.email)
+            await browser.type("input[name='reg_passwd__']", newUser.password)
+            await browser.select("select[name='birthday_day']", newUser.birthday_day)
+            await browser.select("select[name='birthday_month']", newUser.birthday_month)
+            await browser.select("select[name='birthday_year']", newUser.birthday_year)
+            await browser.radio("input[type='radio'][name='sex']", newUser.sex)
+            // await browser.type("input[name='firstname']", _ENTER_)
         })
 
-        newUser.sex = newUser.sex == 1 ? "Feminino" : "Masculino"
-
-        await this.helper.describe("conta criada ...", async () => {
-            console.log(newUser)
-            // await this.browser.close()
-        })
-
-    },
+        //await browser.close()
+    }
 }
 
 module.exports = facebook
