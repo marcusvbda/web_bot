@@ -3,9 +3,9 @@ const puppeteer = require('puppeteer')
 const Browser = {
     browser: undefined,
     page: undefined,
-    async createPage(ignore_env = false) {
+    async createPage(headless = undefined) {
         this.browser = await puppeteer.launch({
-            headless: ignore_env ? true : (process.env.HEADLESS.toLowerCase() == "true"),
+            headless: (headless != undefined) ? headless : (process.env.HEADLESS.toLowerCase() == "true"),
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -19,6 +19,9 @@ const Browser = {
             ignoreDefaultArgs: ["--enable-automation"],
         })
         this.page = await this.browser.newPage()
+        await this.makeStealth()
+    },
+    async makeStealth() {
         await this.page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36')
         await this.page.evaluateOnNewDocument(() => {
             Object.defineProperty(navigator, 'webdriver', {
@@ -38,7 +41,6 @@ const Browser = {
                 get: () => [1, 2]
             })
         })
-
     },
     async close() {
         await this.browser.close()
@@ -59,6 +61,10 @@ const Browser = {
     },
     async select(element, value) {
         await this.page.select(element, value)
+        await this.page.waitFor(this.getTime(0, 500))
+    },
+    async click(element) {
+        await this.page.click(element)
         await this.page.waitFor(this.getTime(0, 500))
     },
     async executeScript(callback, args = {}) {

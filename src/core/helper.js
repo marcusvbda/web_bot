@@ -1,3 +1,7 @@
+String.prototype.capitalize = function () {
+    return this.charAt(0).toUpperCase() + this.slice(1)
+}
+
 const Helper = {
     async describe(description, command) {
         if (process.env.SHOW_DESCRIPTION.toLowerCase() == 'true') console.log(description)
@@ -15,7 +19,7 @@ const Helper = {
                 while (d.length < 14) d += "0"
                 let e = ""
                 let a = ""
-                return a + d + e
+                return `#${(a + d + e).capitalize()}!`
             case "month":
                 return String(Math.floor(Math.random() * (+12 - +1) + +1))
             case "year":
